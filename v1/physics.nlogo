@@ -20,15 +20,20 @@ to choose-axis
           set shape "pivot"
           set size 2
           ]
-        ]
 
-
-    ask COMs [face pivot (count turtles - 1) ]
+        ask COMs [face pivot (count turtles - 1) ]
     let theta [heading] of COM 0
+    show theta
     let pivotx [xcor] of pivot (count turtles - 1)
     let pivoty [ycor] of pivot (count turtles - 1)
     ask fakepatches [
+      set heading 90 - theta
       setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+
+    ]
+    ask COMs [
+      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+    ]
     ]
   ]
 
@@ -42,8 +47,8 @@ to find-COM
   let sumy sum [pycor] of patches with [pcolor = [0 0 255] ]
   let xcom sumx / total
   let ycom sumy / total
-  show xcom
-  show ycom
+  ;;show xcom
+  ;;show ycom
   if count COMs = 0 [
     create-COMs 1
   ]
