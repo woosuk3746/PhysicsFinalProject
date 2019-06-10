@@ -11,17 +11,26 @@ end
 
 to choose-axis
   if mouse-down?
-  [ ask patch mouse-xcor mouse-ycor
-    [if count pivots = 0
+  [
+    if count pivots = 0
       [
-        sprout-pivots 1
+        create-pivots 1
         ask pivots [
+          setxy mouse-xcor mouse-ycor
           set shape "pivot"
           set size 2
           ]
         ]
-      ]
+
+
+    ask COMs [face pivot (count turtles - 1) ]
+    let theta [heading] of COM 0
+    let pivotx [xcor] of pivot (count turtles - 1)
+    let pivoty [ycor] of pivot (count turtles - 1)
+    ask fakepatches [
+      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
     ]
+  ]
 
 
 end
@@ -63,10 +72,10 @@ end
 GRAPHICS-WINDOW
 210
 10
-708
-529
-16
-16
+706
+507
+-1
+-1
 14.8
 1
 10
@@ -144,7 +153,7 @@ BUTTON
 124
 246
 NIL
-find-COM\n
+find-COM
 NIL
 1
 T
@@ -415,7 +424,7 @@ Polygon -7500403 true false 276 85 285 105 302 99 294 83
 Polygon -7500403 true false 219 85 210 105 193 99 201 83
 
 square
-false
+true
 0
 Rectangle -7500403 true true 30 30 270 270
 
@@ -510,9 +519,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 5.3.1
+NetLogo 6.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -528,7 +536,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@
