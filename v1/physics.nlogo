@@ -169,6 +169,21 @@ NIL
 NIL
 1
 
+SLIDER
+24
+550
+196
+583
+turn-angle
+turn-angle
+-15
+15
+0.0
+1
+1
+NIL
+HORIZONTAL
+
 @#$#@#$#@
 ## WHAT IS IT?
 
