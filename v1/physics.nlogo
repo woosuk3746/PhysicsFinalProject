@@ -86,7 +86,7 @@ end
 
 to oscillate
   let I ( sum ([dsquared] of fakepatches) )
-  let omega ( 9.8 * ([distance-from-pivot] of COM 0) ) ^ 0.5
+  let omega ( 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5
   let T 2 * pi / omega
   let theta ( turn-angle * ( cos (180 * omega * time / pi) ) )
   let pivotx [xcor] of pivot (count turtles - 1)
