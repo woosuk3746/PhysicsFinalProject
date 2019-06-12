@@ -84,6 +84,24 @@ to find-COM
   ]
 end
 
+to set-angle
+  let theta turn-angle
+  let pivotx [xcor] of pivot (count turtles - 1)
+  let pivoty [ycor] of pivot (count turtles - 1)
+
+  ask COMs [
+    setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+  ]
+
+  ask COMs [
+          face pivot (count turtles - 1)
+    ]
+  ask fakepatches [
+    set heading heading - theta
+    setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+  ]
+end
+
 to oscillate
   let I ( sum ([dsquared] of fakepatches) )
   let omega ( 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5
@@ -93,21 +111,21 @@ to oscillate
   let pivoty [ycor] of pivot (count turtles - 1)
   set time time + 1
 
-  every T / 1000 [
+
     ask COMs [
           face pivot (count turtles - 1)
     ]
     let head [heading] of COM 0
 
     ask fakepatches [
-      set heading 270 - head
+      set heading heading - theta
       setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
     ]
     ask COMs [
       setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
     ]
 
-  ]
+
 
 end
 @#$#@#$#@
@@ -215,7 +233,7 @@ turn-angle
 turn-angle
 -15
 15
-4.0
+9.0
 1
 1
 NIL
@@ -245,6 +263,23 @@ BUTTON
 459
 go-once
 oscillate
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+237
+324
+337
+357
+set angle
+set-angle
 NIL
 1
 T
