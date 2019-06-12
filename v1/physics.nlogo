@@ -2,6 +2,9 @@ breed [ fakepatches fakepatch ]
 breed [ pivots pivot ]
 breed [ COMs COM ]
 
+turtles-own [ distance-from-pivot dsquared ]
+globals [ time ]
+
 to draw
   if count COMs = 0 [
     if mouse-down?
@@ -19,17 +22,28 @@ to choose-axis
           setxy mouse-xcor mouse-ycor
           set shape "pivot"
           set size 2
-          ]
+          set distance-from-pivot 0
+          set dsquared 0
+        ]
 
-        ask COMs [face pivot (count turtles - 1) ]
+        ask COMs [
+          face pivot (count turtles - 1)
+          set distance-from-pivot (distance pivot (count turtles - 1))
+          set dsquared (distance-from-pivot ^ 2)
+        ]
+
+        ask fakepatches [
+          set distance-from-pivot (distance pivot (count turtles - 1))
+          set dsquared (distance-from-pivot ^ 2)
+        ]
+
     let theta [heading] of COM 0
-    show theta
+    ;;show theta
     let pivotx [xcor] of pivot (count turtles - 1)
     let pivoty [ycor] of pivot (count turtles - 1)
     ask fakepatches [
       set heading 90 - theta
       setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
-
     ]
     ask COMs [
       setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
@@ -70,15 +84,38 @@ to find-COM
   ]
 end
 
-to equilibrium
+to oscillate
+  let I ( sum ([dsquared] of fakepatches) )
+  let omega ( 9.8 * ([distance-from-pivot] of COM 0) ) ^ 0.5
+  let T 2 * pi / omega
+  let theta ( turn-angle * ( cos (180 * omega * time / pi) ) )
+  let pivotx [xcor] of pivot (count turtles - 1)
+  let pivoty [ycor] of pivot (count turtles - 1)
+  set time time + 1
+
+  every T / 1000 [
+    ask COMs [
+          face pivot (count turtles - 1)
+    ]
+    let head [heading] of COM 0
+
+    ask fakepatches [
+      set heading 270 - head
+      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+    ]
+    ask COMs [
+      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+    ]
+
+  ]
 
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-706
-507
+358
+28
+854
+525
 -1
 -1
 14.8
@@ -102,10 +139,10 @@ ticks
 30.0
 
 BUTTON
-28
-120
-92
-153
+65
+181
+217
+214
 NIL
 draw
 T
@@ -119,12 +156,12 @@ NIL
 1
 
 BUTTON
-27
-76
-99
-109
-restart
-ca
+65
+140
+218
+173
+Reset
+ca\nset time 0
 NIL
 1
 T
@@ -136,12 +173,12 @@ NIL
 1
 
 BUTTON
-28
-165
-152
-198
+66
+269
+218
+302
 where to turn?
-choose-axis
+if (count fakepatches > 0) and (count COMs > 0)\n[choose-axis]
 T
 1
 T
@@ -153,12 +190,12 @@ NIL
 1
 
 BUTTON
-29
-213
-124
-246
-NIL
-find-COM
+66
+224
+217
+257
+display center of mass
+if (count COMs = 0) and (count patches with [pcolor != black] > 0)\n[find-COM]\n
 NIL
 1
 T
@@ -170,19 +207,53 @@ NIL
 1
 
 SLIDER
-24
-550
-196
-583
+66
+321
+222
+354
 turn-angle
 turn-angle
 -15
 15
-0.0
+4.0
 1
 1
 NIL
 HORIZONTAL
+
+BUTTON
+68
+370
+221
+403
+oscillate
+if (count COMs > 0) and (count fakepatches > 0) and (count pivots > 0)\n[oscillate]
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+81
+426
+168
+459
+go-once
+oscillate
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
