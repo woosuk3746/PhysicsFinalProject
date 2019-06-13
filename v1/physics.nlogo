@@ -2,7 +2,7 @@ breed [ fakepatches fakepatch ]
 breed [ pivots pivot ]
 breed [ COMs COM ]
 
-turtles-own [ distance-from-pivot dsquared initial-x initial-y]
+turtles-own [ distance-from-pivot dsquared initial-x initial-y initial-heading ]
 globals [ time period I mass omega ]
 
 to draw
@@ -51,16 +51,18 @@ to choose-axis
     ]
     set I ( sum ([dsquared] of fakepatches) )
     set mass count fakepatches
-    set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5
+    set omega ( mass * 9.8 * 100 * ([distance-from-pivot] of COM 0) / I) ^ 0.5
     set period 2 * pi / omega
 
     ask fakepatches [
       set initial-x xcor
       set initial-y ycor
+      set initial-heading heading
     ]
     ask COMs[
       set initial-x xcor
       set initial-y ycor
+      set initial-heading heading
     ]
   ]
 
@@ -118,6 +120,7 @@ to set-angle
 end
 
 to oscillate
+  let first-time timer
   if time >= period [set time 0]
   let theta ( turn-angle * ( cos (180 * omega * time / pi) ) )
   let pivotx [xcor] of pivot (count turtles - 1)
@@ -129,7 +132,7 @@ to oscillate
   let head [heading] of COM 0
 
   ask fakepatches [
-    set heading heading - theta
+    set heading initial-heading - theta
     setxy ((cos theta) * ( initial-x - pivotx) - (sin theta) * (initial-y - pivoty) + pivotx) ((sin theta) * (initial-x - pivotx) + (cos theta) * (initial-y - pivoty) + pivoty)
   ]
   ask COMs [
@@ -137,9 +140,10 @@ to oscillate
     face pivot (count turtles - 1)
   ]
 
-  show time
-  set time time + (period / 10)
-  ;wait period / 10
+  let last-time timer
+  let dt (last-time - first-time)
+  set time time + dt
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -246,7 +250,7 @@ turn-angle
 turn-angle
 -45
 45
-14.0
+18.0
 1
 1
 NIL
