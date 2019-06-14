@@ -151,12 +151,12 @@ to move-axis
     ask pivot (count turtles - 1) [setxy mouse-xcor mouse-ycor]
     ask COMs [
           face pivot (count turtles - 1)
-          set distance-from-pivot (distance pivot (count turtles - 1))
+          set distance-from-pivot ( (distance pivot (count turtles - 1)) / 10 )
           set dsquared (distance-from-pivot ^ 2)
     ]
 
     ask fakepatches [
-      set distance-from-pivot (distance pivot (count turtles - 1))
+      set distance-from-pivot ( (distance pivot (count turtles - 1)) / 10 )
       set dsquared (distance-from-pivot ^ 2)
     ]
     let theta [heading] of COM 0
@@ -171,9 +171,9 @@ to move-axis
       setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
     ]
 
-    set I ( sum ([dsquared] of fakepatches) )
-    set mass count fakepatches ;;converted from kg to g
-    set omega ( mass * 9.8 * 100 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
+    set I ( sum ([dsquared] of fakepatches) / 1000 )
+    set mass ( ( count fakepatches ) / 1000 ) ;;converted from kg to g
+    set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
     set period 2 * pi / omega
 
     ask fakepatches [
