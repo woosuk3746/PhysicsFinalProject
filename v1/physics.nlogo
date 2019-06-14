@@ -42,7 +42,7 @@ to choose-axis
     let pivotx [xcor] of pivot (count turtles - 1)
     let pivoty [ycor] of pivot (count turtles - 1)
     ask fakepatches [
-      set heading 90 - theta
+      set heading heading - theta
       setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
     ]
     ask COMs [
@@ -50,8 +50,8 @@ to choose-axis
     ]
     ]
     set I ( sum ([dsquared] of fakepatches) )
-    set mass count fakepatches
-    set omega ( mass * 9.8 * 100 * ([distance-from-pivot] of COM 0) / I) ^ 0.5
+    set mass count fakepatches ;;converted from kg to g
+    set omega ( mass * 9.8 * 100 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
     set period 2 * pi / omega
 
     ask fakepatches [
@@ -145,6 +145,52 @@ to oscillate
   set time time + dt
 
 end
+
+to move-axis
+  if mouse-down? [
+    ask pivot (count turtles - 1) [setxy mouse-xcor mouse-ycor]
+    ask COMs [
+          face pivot (count turtles - 1)
+          set distance-from-pivot (distance pivot (count turtles - 1))
+          set dsquared (distance-from-pivot ^ 2)
+    ]
+
+    ask fakepatches [
+      set distance-from-pivot (distance pivot (count turtles - 1))
+      set dsquared (distance-from-pivot ^ 2)
+    ]
+    let theta [heading] of COM 0
+    ;;show theta
+    let pivotx [xcor] of pivot (count turtles - 1)
+    let pivoty [ycor] of pivot (count turtles - 1)
+    ask fakepatches [
+      set heading heading - theta
+      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+    ]
+    ask COMs [
+      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+    ]
+
+    set I ( sum ([dsquared] of fakepatches) )
+    set mass count fakepatches ;;converted from kg to g
+    set omega ( mass * 9.8 * 100 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
+    set period 2 * pi / omega
+
+    ask fakepatches [
+      set initial-x xcor
+      set initial-y ycor
+      set initial-heading heading
+    ]
+    ask COMs[
+      set initial-x xcor
+      set initial-y ycor
+      set initial-heading heading
+    ]
+
+  set time 0
+  ]
+
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 358
@@ -213,7 +259,7 @@ BUTTON
 218
 302
 where to turn?
-if (count fakepatches > 0) and (count COMs > 0)\n[choose-axis]
+if (count fakepatches > 0) and (count COMs > 0)\n[choose-axis]\n
 T
 1
 T
@@ -250,7 +296,7 @@ turn-angle
 turn-angle
 -45
 45
-18.0
+45.0
 1
 1
 NIL
@@ -300,6 +346,23 @@ period
 17
 1
 11
+
+BUTTON
+232
+270
+334
+303
+move pivot
+if count pivots = 1 [\nmove-axis\n]
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
