@@ -52,9 +52,9 @@ to choose-axis
           setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
         ]
       ]
-      set I ( ( sum ([dsquared] of fakepatches) ) / 1000 )
-      set mass ( (count fakepatches) / 1000 ) ;;converted from kg to g
-      set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
+      set I ( ( sum ([dsquared] of fakepatches) ) / 1000 ) ;; BLUE PATCHES ARE 1/1000 KG
+      set mass ( (count fakepatches) / 1000 ) ;; BLUE PATCHES ARE 1/1000 KG
+      set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5
       set period 2 * pi / omega
 
       ask fakepatches [
@@ -175,8 +175,8 @@ to move-axis
         setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
       ]
 
-      set I ( sum ([dsquared] of fakepatches) / 1000 )
-      set mass ( ( count fakepatches ) / 1000 ) ;;converted from kg to g
+      set I ( sum ([dsquared] of fakepatches) / 1000 ) ;; BLUE IS 1/1000 KG
+      set mass ( ( count fakepatches ) / 1000 ) ;; BLUE IS 1/1000 KG
       set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
       set period 2 * pi / omega
 
