@@ -8,14 +8,17 @@ globals [ time period I mass omega ]
 to draw
   if count COMs = 0 [
     if mouse-down?
-    [ ask patch mouse-xcor mouse-ycor [set pcolor [0 0 255] ] ]
+    [if abs mouse-xcor < 11 and abs mouse-ycor < 11
+      [ ask patch mouse-xcor mouse-ycor [set pcolor [0 0 255] ] ]
+    ]
   ]
 end
 
 to choose-axis
   if mouse-down?
   [
-    if count pivots = 0
+    if abs(mouse-xcor) < 10 and abs(mouse-ycor) < 10 [
+      if count pivots = 0
       [
         create-pivots 1
         ask pivots [
@@ -37,36 +40,36 @@ to choose-axis
           set dsquared (distance-from-pivot ^ 2)
         ]
 
-    let theta [heading] of COM 0
-    ;;show theta
-    let pivotx [xcor] of pivot (count turtles - 1)
-    let pivoty [ycor] of pivot (count turtles - 1)
-    ask fakepatches [
-      set heading heading - theta
-      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
-    ]
-    ask COMs [
-      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
-    ]
-    ]
-    set I ( ( sum ([dsquared] of fakepatches) ) / 1000 )
-    set mass ( (count fakepatches) / 1000 ) ;;converted from kg to g
-    set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
-    set period 2 * pi / omega
+        let theta [heading] of COM 0
+        ;;show theta
+        let pivotx [xcor] of pivot (count turtles - 1)
+        let pivoty [ycor] of pivot (count turtles - 1)
+        ask fakepatches [
+          set heading heading - theta
+          setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+        ]
+        ask COMs [
+          setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+        ]
+      ]
+      set I ( ( sum ([dsquared] of fakepatches) ) / 1000 )
+      set mass ( (count fakepatches) / 1000 ) ;;converted from kg to g
+      set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
+      set period 2 * pi / omega
 
-    ask fakepatches [
-      set initial-x xcor
-      set initial-y ycor
-      set initial-heading heading
-    ]
-    ask COMs[
-      set initial-x xcor
-      set initial-y ycor
-      set initial-heading heading
+      ask fakepatches [
+        set initial-x xcor
+        set initial-y ycor
+        set initial-heading heading
+      ]
+      ask COMs[
+        set initial-x xcor
+        set initial-y ycor
+        set initial-heading heading
+      ]
+      set time 0
     ]
   ]
-
-  set time 0
 
 
 end
@@ -148,46 +151,48 @@ end
 
 to move-axis
   if mouse-down? [
-    ask pivot (count turtles - 1) [setxy mouse-xcor mouse-ycor]
-    ask COMs [
-          face pivot (count turtles - 1)
-          set distance-from-pivot ( (distance pivot (count turtles - 1)) / 10 )
-          set dsquared (distance-from-pivot ^ 2)
-    ]
+    if abs(mouse-xcor) < 10 and abs(mouse-ycor) < 10 [
+      ask pivot (count turtles - 1) [setxy mouse-xcor mouse-ycor]
+      ask COMs [
+        face pivot (count turtles - 1)
+        set distance-from-pivot ( (distance pivot (count turtles - 1)) / 10 )
+        set dsquared (distance-from-pivot ^ 2)
+      ]
 
-    ask fakepatches [
-      set distance-from-pivot ( (distance pivot (count turtles - 1)) / 10 )
-      set dsquared (distance-from-pivot ^ 2)
-    ]
-    let theta [heading] of COM 0
-    ;;show theta
-    let pivotx [xcor] of pivot (count turtles - 1)
-    let pivoty [ycor] of pivot (count turtles - 1)
-    ask fakepatches [
-      set heading heading - theta
-      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
-    ]
-    ask COMs [
-      setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
-    ]
+      ask fakepatches [
+        set distance-from-pivot ( (distance pivot (count turtles - 1)) / 10 )
+        set dsquared (distance-from-pivot ^ 2)
+      ]
+      let theta [heading] of COM 0
+      ;;show theta
+      let pivotx [xcor] of pivot (count turtles - 1)
+      let pivoty [ycor] of pivot (count turtles - 1)
+      ask fakepatches [
+        set heading heading - theta
+        setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+      ]
+      ask COMs [
+        setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
+      ]
 
-    set I ( sum ([dsquared] of fakepatches) / 1000 )
-    set mass ( ( count fakepatches ) / 1000 ) ;;converted from kg to g
-    set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
-    set period 2 * pi / omega
+      set I ( sum ([dsquared] of fakepatches) / 1000 )
+      set mass ( ( count fakepatches ) / 1000 ) ;;converted from kg to g
+      set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
+      set period 2 * pi / omega
 
-    ask fakepatches [
-      set initial-x xcor
-      set initial-y ycor
-      set initial-heading heading
-    ]
-    ask COMs[
-      set initial-x xcor
-      set initial-y ycor
-      set initial-heading heading
-    ]
+      ask fakepatches [
+        set initial-x xcor
+        set initial-y ycor
+        set initial-heading heading
+      ]
+      ask COMs[
+        set initial-x xcor
+        set initial-y ycor
+        set initial-heading heading
+      ]
 
-  set time 0
+      set time 0
+    ]
   ]
 
 end
@@ -242,7 +247,7 @@ BUTTON
 218
 173
 Reset
-ca\n
+ca\nask patches [ if abs pxcor >= 12 or abs pycor >= 12 [set pcolor white]]\nask patches [ if abs pxcor < 12 and abs pycor < 12 [set pcolor black]]
 NIL
 1
 T
