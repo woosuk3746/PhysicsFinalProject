@@ -401,6 +401,23 @@ blue: 1 g / cm^2\nred: 5 g / cm^2\ngreen: 0.1 g / cm^2
 0.0
 1
 
+BUTTON
+228
+182
+298
+215
+Erase
+ask patch mouse-xcor mouse-ycor [set pcolor black]
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
 @#$#@#$#@
 ## Physical Pendulum Oscillation Simulator
 Tahmid Jamal and Woosuk Lee pd 8/9
@@ -411,7 +428,7 @@ As the name implies, this is a computer simulation that shows the oscillation of
 
 ## How to use it
 1. Click the "Start/Reset" button to start.
-2. Select "Draw the Shape" button. Drag across the screen to draw any shape. The color can be changed by selecting from blue, green, and red from the box labeled "density." After the shape is completed, deselect the "Draw the Shape" button.
+2. Select "Draw the Shape" button. Drag across the screen to draw any shape. The color can be changed by selecting from blue, green, and red from the box labeled "density." Use the "Erase" button to erase any errors. After the shape is completed, deselect the "Draw the Shape" button.
 3. Click "Show the Center of Mass" button, and the center of mass of the drawn shape will appear on the screen.
 4. Click "Place Pivot" to choose the point of oscillation. After placing down the pivot, deslect the "Place Pivot" button.
 5. Choose the angle from the "turn-angle" box, and click "Simulate Oscillation."
