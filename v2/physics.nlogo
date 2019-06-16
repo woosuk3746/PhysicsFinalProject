@@ -2,9 +2,13 @@ breed [ fakepatches fakepatch ]
 breed [ pivots pivot ]
 breed [ COMs COM ]
 
-turtles-own [ distance-from-pivot dsquared initial-x initial-y initial-heading ]
+turtles-own [ distance-from-pivot dsquared initial-x initial-y initial-heading massdsquared]
 fakepatches-own [ color-mass ]
 globals [ time period I mass omega ]
+
+;;blue [0 0 255]
+;;red [255 0 0]
+;;green [0 255 0]
 
 to draw
   if count COMs = 0 [
@@ -22,13 +26,26 @@ end
 
 ;;adjust this for multiple colors
 to find-COM
-  let  total count patches with [pcolor = [0 0 255] ]
-  let sumx sum [pxcor] of patches with [pcolor = [0 0 255] ]
-  let sumy sum [pycor] of patches with [pcolor = [0 0 255] ]
-  let xcom sumx / total
-  let ycom sumy / total
-  ;;show xcom
-  ;;show ycom
+
+  ;blue
+  let  mass-blue count patches with [pcolor = [0 0 255] ]
+  let sumx-blue sum [pxcor] of patches with [pcolor = [0 0 255] ]
+  let sumy-blue sum [pycor] of patches with [pcolor = [0 0 255] ]
+
+  ;red
+  let  mass-red 5 * count patches with [pcolor = [255 0 0] ]
+  let sumx-red sum [pxcor] of patches with [pcolor = [255 0 0] ]
+  let sumy-red sum [pycor] of patches with [pcolor = [255 0 0] ]
+
+  ;green
+  let  mass-green 0.1 * count patches with [pcolor = [0 255 0] ]
+  let sumx-green sum [pxcor] of patches with [pcolor = [0 255 0] ]
+  let sumy-green sum [pycor] of patches with [pcolor = [0 255 0] ]
+
+  let total mass-blue + mass-red + mass-green
+  let xcom (sumx-blue + 5 * sumx-red + 0.1 * sumx-green) / total
+  let ycom (sumy-blue + 5 * sumy-red + 0.1 * sumy-green) / total
+
   if count COMs = 0 [
     create-COMs 1
   ]
@@ -37,16 +54,23 @@ to find-COM
     set shape "COM"
     set size 2
   ]
-  ask patches with [pcolor = [0 0 255] ] [
-    sprout-fakepatches 1
-    set pcolor [0 0 0]
 
+  ask patches with [pcolor != black and pcolor != white] [
+    sprout-fakepatches 1
   ]
+
   ask fakepatches [
-    set color [0 0 255]
+    set color pcolor
     set shape "square"
     set heading 0
-    set size 1.5
+    set size 1.29
+    if color = [0 0 255] [set color-mass 1] ;blue
+    if color = [255 0 0] [set color-mass 5] ;red
+    if color = [0 255 0] [set color-mass 1 / 10] ;green
+  ]
+
+  ask patches with [pcolor != black and pcolor != white] [
+    set pcolor black
   ]
 end
 
@@ -74,6 +98,7 @@ to choose-axis
         ask fakepatches [
           set distance-from-pivot ( (distance pivot (count turtles - 1)) / 10 )
           set dsquared (distance-from-pivot ^ 2)
+          set massdsquared dsquared * color-mass
         ]
 
         let theta [heading] of COM 0
@@ -88,8 +113,8 @@ to choose-axis
           setxy ((cos theta) * ( xcor - pivotx) - (sin theta) * (ycor - pivoty) + pivotx) ((sin theta) * (xcor - pivotx) + (cos theta) * (ycor - pivoty) + pivoty)
         ]
       ]
-      set I ( ( sum ([dsquared] of fakepatches) ) / 1000 )
-      set mass ( (count fakepatches) / 1000 ) ;;converted from kg to g
+      set I ( ( sum ([massdsquared] of fakepatches) ) / 1000 )
+      set mass ( (sum [color-mass] of fakepatches) / 1000 ) ;;converted from kg to g
       set omega ( mass * 9.8 * ([distance-from-pivot] of COM 0) / I) ^ 0.5 ;;g is now in cm/s^2 after 100 is multiplied
       set period 2 * pi / omega
 
@@ -202,10 +227,10 @@ to oscillate
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-668
-27
-1164
-524
+415
+23
+911
+520
 -1
 -1
 14.8
@@ -233,7 +258,7 @@ BUTTON
 181
 217
 214
-NIL
+Draw the Shape
 draw
 T
 1
@@ -250,7 +275,7 @@ BUTTON
 140
 218
 173
-Reset
+Start/Reset
 ca\nask patches [ if abs pxcor >= 12 or abs pycor >= 12 [set pcolor white]]\nask patches [ if abs pxcor < 12 and abs pycor < 12 [set pcolor black]]
 NIL
 1
@@ -267,7 +292,7 @@ BUTTON
 269
 218
 302
-where to turn?
+Place Pivot
 if (count fakepatches > 0) and (count COMs > 0)\n[choose-axis]\n
 T
 1
@@ -282,9 +307,9 @@ NIL
 BUTTON
 66
 224
-217
+219
 257
-display center of mass
+Show Center of Mass
 if (count COMs = 0) and (count patches with [pcolor != black] > 0)\n[find-COM]\n
 NIL
 1
@@ -298,25 +323,25 @@ NIL
 
 SLIDER
 66
-321
+315
 222
-354
+348
 turn-angle
 turn-angle
--45
-45
-45.0
+-15
+15
+9.0
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-68
-370
-221
-403
-oscillate
+62
+365
+223
+398
+Simulate Oscillation
 if (count COMs > 0) and (count fakepatches > 0) and (count pivots > 0)\n[oscillate]
 T
 1
@@ -328,28 +353,11 @@ NIL
 NIL
 1
 
-BUTTON
-81
-426
-168
-459
-go-once
-oscillate
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 MONITOR
-212
-45
-269
-90
+66
+79
+123
+124
 NIL
 period
 17
@@ -359,9 +367,9 @@ period
 BUTTON
 232
 270
-334
+335
 303
-move pivot
+Move Pivot
 if count pivots = 1 [\nmove-axis\n]
 T
 1
@@ -374,51 +382,45 @@ NIL
 1
 
 CHOOSER
-382
-123
-520
-168
+237
+88
+375
+133
 density
 density
 "blue" "red" "green"
+0
+
+TEXTBOX
+238
+41
+388
+107
+blue: 1 g / cm^2\nred: 5 g / cm^2\ngreen: 0.1 g / cm^2
+12
+0.0
 1
 
 @#$#@#$#@
-## WHAT IS IT?
+## Physical Pendulum Oscillation Simulator
+Tahmid Jamal and Woosuk Lee pd 8/9
 
-(a general understanding of what the model is trying to show or explain)
 
-## HOW IT WORKS
+## What is it?
+As the name implies, this is a computer simulation that shows the oscillation of any shape of objects of non-uniform density. The user can draw the shape, choose the pivot point, and select the angle of oscillation (from -15 to 15 degrees).
 
-(what rules the agents use to create the overall behavior of the model)
+## How to use it
+1. Click the "Start/Reset" button to start.
+2. Select "Draw the Shape" button. Drag across the screen to draw any shape. The color can be changed by selecting from blue, green, and red from the box labeled "density." After the shape is completed, deselect the "Draw the Shape" button.
+3. Click "Show the Center of Mass" button, and the center of mass of the drawn shape will appear on the screen.
+4. Click "Place Pivot" to choose the point of oscillation. After placing down the pivot, deslect the "Place Pivot" button.
+5. Choose the angle from the "turn-angle" box, and click "Simulate Oscillation."
+6. While the simulation is ongoing, the user is free to change the angle by dragging from the "turn-angle" box or the point of oscillation using the "Move Pivot" button.
 
-## HOW TO USE IT
-
-(how to use the model, including a description of each of the items in the Interface tab)
-
-## THINGS TO NOTICE
-
-(suggested things for the user to notice while running the model)
-
-## THINGS TO TRY
-
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
-
-## EXTENDING THE MODEL
-
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
-
-## NETLOGO FEATURES
-
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
-
-## RELATED MODELS
-
-(models in the NetLogo Models Library and elsewhere which are of related interest)
-
-## CREDITS AND REFERENCES
-
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+## Color Representations
+blue: 1 g / cm^2
+red: 5 g / cm^2
+green: 0.1 g / cm^2
 @#$#@#$#@
 default
 true
