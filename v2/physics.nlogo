@@ -424,7 +424,7 @@ Tahmid Jamal and Woosuk Lee pd 8/9
 
 
 ## What is it?
-As the name implies, this is a computer simulation that shows the oscillation of any shape of objects of non-uniform density. The user can draw the shape (with varying densities), choose the pivot point, and select the angle of oscillation (from -15 to 15 degrees).
+As the name implies, this is a computer simulation that shows the oscillation of any shape of objects of non-uniform density. The user can draw the shape (with varying densities), choose the pivot point, and select the angle of oscillation (from -15 to 15 degrees). The white space in the screen is the area in which the user cannot draw. This is to prevent the shape from going off the screen while oscillating.
 
 ## How to use it
 1. Click the "Start/Reset" button to start.
@@ -758,7 +758,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.1
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
