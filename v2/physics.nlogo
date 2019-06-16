@@ -330,7 +330,7 @@ turn-angle
 turn-angle
 -15
 15
-0.0
+4.0
 1
 1
 NIL
@@ -396,7 +396,7 @@ TEXTBOX
 41
 388
 107
-blue: 1 g / cm^2\nred: 5 g / cm^2\ngreen: 0.1 g / cm^2
+blue: 1 g / (10 cm)^2\nred: 5 g / (10 cm)^2\ngreen: 0.1 g / (10 cm)^2
 12
 0.0
 1
@@ -407,7 +407,7 @@ BUTTON
 298
 215
 Erase
-ask patch mouse-xcor mouse-ycor [set pcolor black]
+if count COMs = 0 [\n    if mouse-down?[\n      if abs mouse-xcor < 11 and abs mouse-ycor < 11[\n        ask patch mouse-xcor mouse-ycor [\n          set pcolor black\n          \n        ]\n      ]\n    ]\n  ]
 T
 1
 T
@@ -758,7 +758,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.0
+NetLogo 6.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
